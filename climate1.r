@@ -1,0 +1,10 @@
+install.packages("raster")
+install.packages("sp")
+install.packages("terra")
+library(raster)
+options(timeout = 3000)
+
+install.packages("terra")
+setwd("C:/Users/r/Desktop/r_climate/data")
+library(openxlsx)
+data <- read.xlsx("lat_lon.xlsx", sheet = 1)
