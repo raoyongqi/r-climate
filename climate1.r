@@ -1,38 +1,38 @@
-install.packages("raster")
-install.packages("sp")
-install.packages("terra")
-library(raster)
-options(timeout = 3000)
-
-install.packages("terra")
-setwd("C:/Users/r/Desktop/r_climate/data")
+加载必要的包
+library(geodata)
 library(openxlsx)
-data <- read.xlsx("lat_lon.xlsx", sheet = 1)
+
+# 设置工作目录
+setwd("C:/Users/r/Desktop/r_climate/data")
+
+# 读取 Excel 文件中的经纬度数据
+data <- read.xlsx("lon_lat.xlsx", sheet = 1)
 names(data) <- tolower(names(data))
 
-
+# 检查是否包含 'lon' 和 'lat' 列
 if(!all(c('lon', 'lat') %in% names(data))) {
   stop("Excel 文件需要包含 'lon' 和 'lat' 列")
 }
 
-
-
-variables <- c('bio', 'tmin', 'tmax', 'prec')
+# 定义要下载的气候变量
+variables <- c("bio", "elev", "prec", "srad", "tavg", "tmax", "tmin", "vapr", "wind")
 
 # 定义一个函数来下载和提取单个样点的数据
-download_and_extract <- function(lon, lat, var, res = 0.5) {
-  clim_data <- getData('worldclim', var = var, res = res, lon = lon, lat = lat)
-  return(extract(clim_data, matrix(c(lon, lat), ncol = 2)))
+download_and_extract <- function(lon, lat, var, res = 10) {
+  clim_data <- geodata::worldclim_global(var = var, res = res, path = ".")
+  return(raster::extract(clim_data, matrix(c(lon, lat), ncol = 2)))
 }
-worldclim <- raster::getData('worldclim', var='prec', res=2.5, lon = 142.61, lat = -23.64)
 
-# 迭代每个样点，下载并提取数据
+# 初始化结果数据框
+result <- data
+
+# 迭代每个气候变量，下载并提取数据
 for (var in variables) {
   all_clim_values <- NULL
   
-  for (i in 1:nrow(points)) {
-    lon <- points$x[i]
-    lat <- points$y[i]
+  for (i in 1:nrow(data)) {
+    lon <- data$lon[i]
+    lat <- data$lat[i]
     
     clim_values <- download_and_extract(lon, lat, var)
     
@@ -52,4 +52,7 @@ for (var in variables) {
 
 # 保存结果到新的 Excel 文件
 output_file_path <- "climate_data.xlsx"
-write_xlsx(result, output_file_path)
+write.xlsx(result, output_file_path, row.names = FALSE)
+
+# 完成
+cat("气候数据已成功保存到", output_file_path)
