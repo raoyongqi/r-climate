@@ -52,7 +52,7 @@ for (var in variables) {
 
 # 保存结果到新的 Excel 文件
 output_file_path <- "climate_data.xlsx"
-write.xlsx(result, output_file_path, row.names = FALSE)
+write.xlsx(result, output_file_path, rowNames = FALSE)
 
 # 完成
 cat("气候数据已成功保存到", output_file_path)
