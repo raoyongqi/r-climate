@@ -1,6 +1,8 @@
-加载必要的包
+# 加载必要的包
 library(geodata)
 library(openxlsx)
+library(raster)  # 添加对 raster 包的引用
+library(utils)   # 添加对 utils 包的引用
 
 # 设置工作目录
 setwd("C:/Users/r/Desktop/r_climate/data")
@@ -28,6 +30,11 @@ result <- data
 
 # 迭代每个气候变量，下载并提取数据
 for (var in variables) {
+  cat("Processing variable:", var, "\n")
+  
+  # 初始化进度条
+  pb <- txtProgressBar(min = 0, max = nrow(data), style = 3)
+  
   all_clim_values <- NULL
   
   for (i in 1:nrow(data)) {
@@ -41,10 +48,13 @@ for (var in variables) {
     } else {
       all_clim_values <- rbind(all_clim_values, clim_values)
     }
+    
+    # 更新进度条
+    setTxtProgressBar(pb, i)
   }
   
-  # 给提取到的数据添加前缀
-  colnames(all_clim_values) <- paste(var, colnames(all_clim_values), sep = "_")
+  # 关闭进度条
+  close(pb)
   
   # 将提取到的数据与原始样点数据合并
   result <- cbind(result, all_clim_values)
@@ -55,4 +65,4 @@ output_file_path <- "climate_data.xlsx"
 write.xlsx(result, output_file_path, rowNames = FALSE)
 
 # 完成
-cat("气候数据已成功保存到", output_file_path)
+cat("气候数据已成功保存到", output_file_path, "\n")
