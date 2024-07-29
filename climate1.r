@@ -20,7 +20,7 @@ if(!all(c('lon', 'lat') %in% names(data))) {
 variables <- c("bio", "elev", "prec", "srad", "tavg", "tmax", "tmin", "vapr", "wind")
 
 # 定义一个函数来下载和提取单个样点的数据
-download_and_extract <- function(lon, lat, var, res = 10) {
+download_and_extract <- function(lon, lat, var, res = 5) {
   clim_data <- geodata::worldclim_global(var = var, res = res, path = ".")
   return(raster::extract(clim_data, matrix(c(lon, lat), ncol = 2)))
 }
