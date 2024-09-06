@@ -1,7 +1,7 @@
 import xarray as xr
 
 # 打开 NetCDF 文件
-input_file = 'HWSD_1247/data/AWC_CLASS.nc4'  # 具体的 NetCDF 文件路径
+input_file = '/home/r/Desktop/getData/r-climate/data/HWSD_1247/data/AWC_CLASS.nc4'
 ds = xr.open_dataset(input_file)
 
 # 打印所有变量的名字

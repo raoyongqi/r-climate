@@ -5,9 +5,9 @@ import rasterio
 from rasterio.transform import rowcol
 
 # 输入文件路径和文件夹路径
-excel_file = 'data/final_data.xlsx'
-tif_folder = 'TIF'
-output_excel = 'data/output_data.xlsx'
+excel_file = '/home/r/Desktop/getData/r-climate/data/final_data.xlsx'
+tif_folder = '/home/r/Desktop/getData/r-climate/data/HWSD_1247/tif'
+output_excel = '/home/r/Desktop/getData/r-climate/data/output_data.xlsx'
 
 # 读取 Excel 文件中的经纬度数据
 df = pd.read_excel(excel_file)
