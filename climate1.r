@@ -10,11 +10,35 @@ library(openxlsx)
 library(raster)  # 添加对 raster 包的引用
 library(utils)   # 添加对 utils 包的引用
 
+sys_info <- Sys.info()
+
+if (!is.null(sys_info)) {
+  if (sys_info['sysname'] == 'Windows') {
+    print("系统是Windows")
+    setwd("C:/Users/r/Desktop/r_climate/data")
+    
+  } else if (sys_info['sysname'] == 'Linux') {
+    os_release <- readLines('/etc/os-release')
+    if (any(grepl("Ubuntu", os_release))) {
+      print("系统是Ubuntu")
+      setwd("~/Desktop/getData/r-climate/data")
+
+      
+    } else {
+      print("系统是其他Linux发行版")
+    }
+  } else {
+    print("系统不是Windows或Ubuntu")
+  }
+} else {
+  print("无法获取系统信息")
+}
+
+
 # 设置工作目录
-setwd("C:/Users/r/Desktop/r_climate/data")
 
 # 读取 Excel 文件中的经纬度数据
-data <- read.xlsx("lon_lat.xlsx", sheet = 1)
+data <- read_excel("1_Alldata.xlsx", sheet = "Lacation")
 names(data) <- tolower(names(data))
 
 # 检查是否包含 'lon' 和 'lat' 列

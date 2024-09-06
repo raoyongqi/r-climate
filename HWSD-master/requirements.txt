@@ -1,0 +1,15 @@
+rasterio
+matplotlib
+pyodbc
+sqlalchemy
+pandas 
+fiona
+shapely
+msaccessdb
+pypyodbc
+xarray
+netcdf4 
+h5netcdf
+scipy
+openpyxl
+tqdm
