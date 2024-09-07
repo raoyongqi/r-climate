@@ -5,7 +5,7 @@ from matplotlib.colors import Normalize
 from matplotlib.cm import get_cmap
 
 # 打开 TIFF 文件
-tif_file = "cliped_folder/cropped_AWC_CLASS_AWC_CLASS_resampled.tif"
+tif_file = "/home/r/Desktop/r-climate/data/HWSD_1247/tif/cropped_AWC_CLASS_AWC_CLASS_resampled.tif"
 
 with rasterio.open(tif_file) as src:
     # 读取栅格数据

@@ -3,8 +3,8 @@ import subprocess
 from netCDF4 import Dataset
 
 # 输入和输出文件夹路径
-input_folder = '/home/r/Desktop/getData/r-climate/data/HWSD_1247/data'
-output_folder = '/home/r/Desktop/getData/r-climate/data/HWSD_1247/tif'
+input_folder = '/home/r/Desktop/r-climate/data/HWSD_1247/data'
+output_folder = '/home/r/Desktop/r-climate/data/HWSD_1247/tif'
 
 # 创建输出文件夹（如果不存在）
 os.makedirs(output_folder, exist_ok=True)
