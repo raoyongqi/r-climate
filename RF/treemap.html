@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .node {
+            font: 10px sans-serif;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+    </style>
+    <title>Treemap from CSV</title>
+</head>
+<body>
+    <div id="treemap"></div>
+    <script>
+        // Set up the size of the treemap
+        const width = 960;
+        const height = 600;
+
+        // Create the SVG element
+        const svg = d3.select("body")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        const format = d3.format(",d");
+
+        // Define the color scale
+        const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+        const treemap = d3.treemap()
+            .size([width, height])
+            .paddingInner(1);
+
+        // Load CSV data
+        d3.csv("https://raw.githubusercontent.com/holtzy/The-Python-Graph-Gallery/master/static/data/simple-treemap.csv").then(function(data) {
+            // Convert values to numbers
+            data.forEach(d => {
+                d.value = +d.value;
+            });
+
+            // Create a hierarchy from the CSV data
+            const root = d3.hierarchy({ children: data })
+                .sum(d => d.value)
+                .sort((a, b) => b.value - a.value);
+
+            // Apply the treemap layout
+            treemap(root);
+
+            // Add the nodes (rectangles) to the SVG
+            const cell = svg.selectAll("g")
+                .data(root.leaves())
+                .enter().append("g")
+                .attr("transform", d => `translate(${d.x0},${d.y0})`);
+
+            // Draw rectangles for each leaf node
+            cell.append("rect")
+                .attr("id", d => d.data.name)
+                .attr("width", d => d.x1 - d.x0)
+                .attr("height", d => d.y1 - d.y0)
+                .attr("fill", d => color(d.data.name));
+
+            // Add text labels inside the rectangles
+            cell.append("text")
+                .attr("x", d => (d.x1 - d.x0) / 2)
+                .attr("y", d => (d.y1 - d.y0) / 2)
+                .attr("dy", "0.35em")
+                .text(d => d.data.name)
+                .attr("class", "node");
+        });
+    </script>
+</body>
+</html>

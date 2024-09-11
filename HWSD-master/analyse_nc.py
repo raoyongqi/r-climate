@@ -1,4 +1,4 @@
-import xarray as xr
+# import xarray as xr
 
 # 打开 NetCDF 文件
 input_file = '/home/r/Desktop/r-climate/data/HWSD_1247/data/AWC_CLASS.nc4'

@@ -2,9 +2,11 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
+import joblib  # 用于保存模型
+import os  # 用于处理文件和目录
 
 # 1. 读取Excel文件
-file_path = '/your/file/path/output_data.xlsx'  # 替换为你的文件路径
+file_path = 'data/final_data.xlsx'  # 替换为你的文件路径
 data = pd.read_excel(file_path)
 
 # 2. 筛选特征列：以 '_resampled' 结尾，'wc' 开头（不区分大小写），以及 'LON' 和 'lat' 列
@@ -31,3 +33,24 @@ r2 = r2_score(y_test, y_pred)
 # 输出结果
 print(f"均方误差 (MSE): {mse:.4f}")
 print(f"R² 得分: {r2:.4f}")
+
+# 8. 确保保存路径存在
+os.makedirs('data/model', exist_ok=True)
+
+# 9. 保存模型
+joblib.dump(rf, 'data/model/random_forest_model.pkl')
+
+# 10. 保存变量重要性
+feature_importances = rf.feature_importances_
+importance_df = pd.DataFrame({
+    'Feature': feature_columns,
+    'Importance': feature_importances
+}).sort_values(by='Importance', ascending=False)
+importance_df.to_csv('data/model/feature_importances.csv', index=False)
+
+# 11. 保存预测结果
+predictions_df = pd.DataFrame({
+    'Actual': y_test,
+    'Predicted': y_pred
+})
+predictions_df.to_csv('data/model/predictions.csv', index=False)
