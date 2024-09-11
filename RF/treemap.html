@@ -36,7 +36,7 @@
             .paddingInner(1);
 
         // Load CSV data
-        d3.csv("https://raw.githubusercontent.com/holtzy/The-Python-Graph-Gallery/master/static/data/simple-treemap.csv").then(function(data) {
+        d3.csv("data/model/feature_importances.csv").then(function(data) {
             // Convert values to numbers
             data.forEach(d => {
                 d.value = +d.value;
