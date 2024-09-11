@@ -8,7 +8,7 @@ import numpy as np
 # 输入文件夹路径和 GeoJSON 文件路径
 tiff_folder = 'TIF/'
 geojson_path = 'geojson/filtered_data.geojson'
-output_folder = 'cliped_folder/'
+output_folder = 'cropped_data/'
 
 # 创建输出文件夹（如果不存在）
 os.makedirs(output_folder, exist_ok=True)

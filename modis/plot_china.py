@@ -3,14 +3,14 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 
 # 读取 Grasslands GeoJSON 文件
-grasslands_geojson_file = 'C:/Users/r/desktop/modis/data/clipped_data.geojson'
+grasslands_geojson_file = '/home/r/Desktop/r-climate/data/clipped_data.geojson'
 grasslands_gdf = gpd.read_file(grasslands_geojson_file)
 
 # 筛选出值等于 10 的 Grasslands (草地)
 grasslands_gdf = grasslands_gdf[grasslands_gdf['value'] == 10]
 
 # 读取国界线 GeoJSON 文件
-borders_geojson_file = 'C:/Users/r/desktop/modis/geojson/CN-border-L1.geojson'
+borders_geojson_file = '/home/r/Desktop/r-climate/geojson/CN-border-L1.geojson'
 borders_gdf = gpd.read_file(borders_geojson_file)
 
 # 检查数据
@@ -41,5 +41,7 @@ ax.set_ylabel('Latitude')
 
 # 添加图例
 ax.legend(handles=legend_patches, loc='upper left', bbox_to_anchor=(1, 1), title='Categories')
-
+# 如果在没有 GUI 支持的环境中运行，将图形保存到文件
+output_file = '/home/r/Desktop/r-climate/data/clipped_data_visualization.png'
+fig.savefig(output_file)
 plt.show()
