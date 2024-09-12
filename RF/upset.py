@@ -87,3 +87,4 @@ importance_csv_files = [
 
 # 生成 UpSet 数据
 upset_df = generate_upset_df(importance_csv_files)
+print(upset_df)
