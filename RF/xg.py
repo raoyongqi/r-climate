@@ -5,6 +5,8 @@ from xgboost import XGBRegressor  # 使用XGBoost
 import joblib  # 用于保存模型
 import os  # 用于处理文件和目录
 import re
+import shap  # 导入SHAP库
+import matplotlib.pyplot as plt  # 导入matplotlib用于绘图
 
 # 1. 读取Excel文件
 file_path = 'data/output_data.xlsx'  # 替换为你的文件路径
@@ -76,3 +78,13 @@ predictions_df = pd.DataFrame({
     'Predicted': y_pred
 })
 predictions_df.to_csv('data/model/predictions.csv', index=False)
+
+# 12. 计算 SHAP 值并绘制 SHAP 图
+explainer = shap.Explainer(xgb_model, X_train)
+shap_values = explainer(X_test)
+
+# 绘制 SHAP 值的 summary plot
+shap.summary_plot(shap_values, X_test)
+
+# 保存 SHAP 图
+plt.savefig('data/model/shap_summary_plot.png')
