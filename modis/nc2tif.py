@@ -6,8 +6,9 @@ from rasterio.warp import calculate_default_transform, reproject
 import os
 
 # 输入和输出文件夹路径
-input_folder = 'HWSD_1247/data'
-output_folder = 'TIF'
+# 输入和输出文件夹路径
+input_folder = '/home/r/Desktop/r-climate/data/HWSD_1247/data'
+output_folder = '/home/r/Desktop/r-climate/data/HWSD_1247/tif'
 
 # 目标分辨率（5 分钟）
 target_resolution = 0.083333  # 5 minutes

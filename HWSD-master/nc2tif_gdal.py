@@ -36,19 +36,35 @@ def get_variable_attributes(nc_file):
                 variables[var_name] = attributes
         return variables
 
-def convert_and_resample(input_file, variable_attributes, nodata_value):
+def get_crs_info(nc_file):
+    """
+    从 NetCDF 文件中获取 CRS 信息。如果找不到，则返回 WGS84 坐标系。
+    """
+    with Dataset(nc_file, 'r') as ds:
+        # 尝试获取 CRS 信息（根据 NetCDF 文件的具体情况）
+        if 'crs' in ds.ncattrs():
+            crs_info = ds.getncattr('crs')
+        else:
+            # 如果 CRS 信息不在 'crs' 中，尝试其他常见的属性名
+            crs_info = None
+        # 如果 CRS 信息不可用，返回 WGS84
+        if crs_info is None:
+            crs_info = 'EPSG:4326'
+        return crs_info
+
+def convert_and_resample(input_file, variable_attributes, nodata_value, crs_info):
     """
     将 NetCDF 文件转换为 TIFF 并重采样到指定分辨率
     """
     for var_name, attrs in variable_attributes.items():
         long_name = attrs.get('long_name', var_name)
         variable = attrs.get('variable', var_name)
-
+        
         # 临时未重采样的 TIFF 文件路径
         temp_tif = os.path.join(output_folder, f'{os.path.splitext(os.path.basename(input_file))[0]}_{variable}_temp.tif')
         # 重采样后的 TIFF 文件路径
         final_output_file = os.path.join(output_folder, f'{os.path.splitext(os.path.basename(input_file))[0]}_{variable}_resampled.tif')
-
+        
         # 构建 gdal_translate 命令
         translate_command = [
             'gdal_translate',
@@ -59,14 +75,18 @@ def convert_and_resample(input_file, variable_attributes, nodata_value):
             input_file,  # 输入文件
             temp_tif  # 临时 TIFF 文件
         ]
-
+        
+        # 添加 CRS 信息到 gdal_translate 命令
+        if crs_info is not None:
+            translate_command.extend(['-a_srs', crs_info])
+        
         # 移除空字符串元素
         translate_command = [arg for arg in translate_command if arg]
-
+        
         try:
             subprocess.run(translate_command, check=True, text=True, capture_output=True)
             print(f'Successfully converted {input_file} variable {variable} to {temp_tif}')
-
+            
             # 构建 gdalwarp 命令进行重采样
             warp_command = [
                 'gdalwarp',
@@ -75,10 +95,10 @@ def convert_and_resample(input_file, variable_attributes, nodata_value):
                 temp_tif,  # 输入临时 TIFF 文件
                 final_output_file  # 输出最终 TIFF 文件
             ]
-
+            
             subprocess.run(warp_command, check=True, text=True, capture_output=True)
             print(f'Successfully resampled {temp_tif} to {final_output_file}')
-
+        
         except subprocess.CalledProcessError as e:
             print(f'Error processing {input_file} variable {variable}')
             print(f'Standard Output:\n{e.stdout}')
@@ -97,6 +117,9 @@ for file_name in os.listdir(input_folder):
         
         # 获取变量属性
         variable_attributes = get_variable_attributes(input_file)
-
+        
+        # 获取 CRS 信息
+        crs_info = get_crs_info(input_file)
+        
         # 转换并重采样
-        convert_and_resample(input_file, variable_attributes, nodata_value)
+        convert_and_resample(input_file, variable_attributes, nodata_value, crs_info)
