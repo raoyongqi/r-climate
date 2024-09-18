@@ -10,7 +10,7 @@ grasslands_gdf = gpd.read_file(grasslands_geojson_file)
 grasslands_gdf = grasslands_gdf[grasslands_gdf['value'] == 10]
 
 # 读取国界线 GeoJSON 文件
-borders_geojson_file = '/home/r/Desktop/r-climate/geojson/CN-border-L1.geojson'
+borders_geojson_file = '/home/r/Desktop/r-climate/geojson/中华人民共和国.json'
 borders_gdf = gpd.read_file(borders_geojson_file)
 
 # 检查数据
@@ -27,12 +27,12 @@ legend_patches = [Patch(color=grassland_color, label='Grasslands'),
 
 # 绘制数据
 fig, ax = plt.subplots(figsize=(10, 8))
-
+# 绘制 Borders 数据
+borders_gdf.plot(ax=ax, color=border_color, linewidth=1)
 # 绘制 Grasslands 数据
 grasslands_gdf.plot(ax=ax, color=grassland_color)
 
-# 绘制 Borders 数据
-borders_gdf.plot(ax=ax, color=border_color, linewidth=1)
+
 
 # 设置标题和标签
 ax.set_title('Grasslands and Borders from GeoJSON Files')
