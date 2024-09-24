@@ -2,14 +2,14 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import cartopy.crs as ccrs
-import cartopy.feature as cfeature
+import pandas as pd  # 导入 pandas
 
 # 读取 GeoJSON 数据
-geojson_file_path = '/home/r/Desktop/r-climate/geojson/中华人民共和国.json'
+geojson_file_path = 'geojson/中华人民共和国.json'
 gdf_geojson = gpd.read_file(geojson_file_path)
 
 # 读取 Shapefile 数据
-shp_file_path = '/home/r/Desktop/r-climate/data/clipped_data.geojson'
+shp_file_path = 'data/clipped_data.geojson'
 gdf_shp = gpd.read_file(shp_file_path)
 
 # 筛选出值等于 10 的 Grasslands (草地)
@@ -17,6 +17,19 @@ if 'value' in gdf_shp.columns:
     grasslands_gdf = gdf_shp[gdf_shp['value'] == 10]
 else:
     raise KeyError("The column 'value' does not exist in the shapefile data.")
+
+# 读取 Excel 文件
+file_path = 'data/1_Alldata.xlsx'  # 替换为您的文件路径
+sheet1_name = 'Lacation'  # 第一个工作表名称
+points_df = pd.read_excel(file_path, sheet_name=sheet1_name)  # 第一个工作表
+
+
+# 创建 GeoDataFrame 来转换坐标系
+points_gdf = gpd.GeoDataFrame(
+    points_df, 
+    geometry=gpd.points_from_xy(points_df['LON'], points_df['LAT']), 
+    crs='EPSG:4326'  # WGS84 坐标系
+)
 
 # 定义 Albers 投影坐标系
 albers_proj = ccrs.AlbersEqualArea(
@@ -36,25 +49,28 @@ if gdf_geojson.crs != albers_proj:
 if grasslands_gdf.crs != albers_proj:
     grasslands_gdf = grasslands_gdf.to_crs(albers_proj)
 
+# 转换样点的坐标系到自定义投影坐标系
+points_gdf = points_gdf.to_crs(albers_proj)
+
 # 绘制转换后的 GeoJSON 数据
 gdf_geojson.plot(ax=ax, edgecolor='black', facecolor='white', label='GeoJSON Data')
 
 # 绘制筛选后的 Grasslands 数据
-grasslands_gdf.plot(ax=ax, edgecolor='green', facecolor='green', linewidth=2, alpha=0.5, label='Grasslands (value=10)')
+grasslands_gdf.plot(ax=ax, edgecolor='none', facecolor='green', linewidth=2, alpha=0.5, label='Grasslands (value=10)')
+
+# 绘制样点
+points_gdf.plot(ax=ax, color='red', marker='o', label='Sample Points', markersize=20)
 
 # 添加标题
-plt.title('Filtered Grasslands and GeoJSON Data with Custom Projection')
+plt.title('Filtered Grasslands and GeoJSON Data with Sample Points')
 
 # 添加图例
 legend_patches = [
     mpatches.Patch(color='green', label='Grassland (value=10)'),
-    mpatches.Patch(color='white', edgecolor='black', label='Other Areas'),
+    mpatches.Patch(color='white', edgecolor='none', label='Other Areas'),
+    mpatches.Patch(color='red', label='Sample Points'),
 ]
 plt.legend(handles=legend_patches)
-
-# 设置坐标轴标签
-ax.set_xlabel('Easting (meters)')
-ax.set_ylabel('Northing (meters)')
 
 # 添加经纬度网格线
 gridlines = ax.gridlines(draw_labels=True, color='gray', linestyle='--', alpha=0.5)
@@ -65,7 +81,7 @@ gridlines.top_labels = False
 gridlines.right_labels = False
 
 # 保存图形到文件
-output_file_path = '/home/r/Desktop/r-climate/data/shapefile_overlay_cartopy.png'
+output_file_path = 'data/shapefile_overlay_cartopy.png'
 plt.savefig(output_file_path, dpi=300, bbox_inches='tight')
 
 # 显示图形

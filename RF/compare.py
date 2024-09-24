@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import time
 import xgboost as xgb
+import lightgbm as lgb  # Import LightGBM
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
@@ -85,10 +86,24 @@ print(f"Random Forest Mean Squared Error (MSE): {mse_rf:.4f}")
 print(f"Random Forest R² Score: {r2_rf:.4f}")
 print(f"Random Forest Training Time: {rf_time:.2f} seconds")
 
-# 12. Prepare data for plotting
-models = ['Neural Network', 'XGBoost', 'Random Forest']
-r2_scores = [r2_nn, r2_xgb, r2_rf]
-times = [nn_time, xgb_time, rf_time]
+# 12. Train and evaluate the LightGBM model
+start_time = time.time()
+lgb_model = lgb.LGBMRegressor()
+lgb_model.fit(X_train_scaled, y_train)
+lgb_time = time.time() - start_time
+
+y_pred_lgb = lgb_model.predict(X_test_scaled)
+mse_lgb = mean_squared_error(y_test, y_pred_lgb)
+r2_lgb = r2_score(y_test, y_pred_lgb)
+
+print(f"LightGBM Mean Squared Error (MSE): {mse_lgb:.4f}")
+print(f"LightGBM R² Score: {r2_lgb:.4f}")
+print(f"LightGBM Training Time: {lgb_time:.2f} seconds")
+
+# 13. Prepare data for plotting
+models = ['Neural Network', 'XGBoost', 'Random Forest', 'LightGBM']
+r2_scores = [r2_nn, r2_xgb, r2_rf, r2_lgb]
+times = [nn_time, xgb_time, rf_time, lgb_time]
 
 # Create DataFrame for sorting
 results_df = pd.DataFrame({
@@ -108,14 +123,14 @@ plt.figure(figsize=(14, 7))
 
 # Plot R² Scores sorted from high to low
 plt.subplot(1, 2, 1)
-plt.bar(results_df_sorted_r2['Model'], results_df_sorted_r2['R2 Score'], color=['blue', 'green', 'red'])
+plt.bar(results_df_sorted_r2['Model'], results_df_sorted_r2['R2 Score'], color=['blue', 'green', 'red', 'purple'])
 plt.xlabel('Model')
 plt.ylabel('R² Score')
 plt.title('R² Score Comparison (High to Low)')
 
 # Plot Training Time sorted from low to high
 plt.subplot(1, 2, 2)
-plt.bar(results_df_sorted_time['Model'], results_df_sorted_time['Training Time'], color=['blue', 'green', 'red'])
+plt.bar(results_df_sorted_time['Model'], results_df_sorted_time['Training Time'], color=['blue', 'green', 'red', 'purple'])
 plt.xlabel('Model')
 plt.ylabel('Training Time (seconds)')
 plt.title('Training Time Comparison (Low to High)')
@@ -124,9 +139,27 @@ plt.tight_layout()
 plt.savefig('data/model_performance_comparison.png')  # Save plot to file
 plt.show()
 
-# 13. Save prediction results
+# 14. Save prediction results for each model
 predictions_nn_df = pd.DataFrame({
     'Actual': y_test,
     'Predicted': y_pred_nn.flatten()
 })
 predictions_nn_df.to_csv('data/model/predictions_nn.csv', index=False)
+
+predictions_xgb_df = pd.DataFrame({
+    'Actual': y_test,
+    'Predicted': y_pred_xgb
+})
+predictions_xgb_df.to_csv('data/model/predictions_xgb.csv', index=False)
+
+predictions_rf_df = pd.DataFrame({
+    'Actual': y_test,
+    'Predicted': y_pred_rf
+})
+predictions_rf_df.to_csv('data/model/predictions_rf.csv', index=False)
+
+predictions_lgb_df = pd.DataFrame({
+    'Actual': y_test,
+    'Predicted': y_pred_lgb
+})
+predictions_lgb_df.to_csv('data/model/predictions_lgb.csv', index=False)
