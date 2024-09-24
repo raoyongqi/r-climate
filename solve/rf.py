@@ -75,6 +75,8 @@ for i, file in enumerate(tif_files):
     data, profile, xs, ys = read_tif_with_coords(file)
     data_list.append(data)
     profiles.append(profile)
+    if "elev" in file:  # 根据文件名判断
+        print(f"Elev data is from file: {file}")
     if i == 0:  # 只保存第一个tif的经纬度信息
         lons, lats = xs, ys
 
