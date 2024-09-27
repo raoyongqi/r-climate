@@ -1,19 +1,19 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
-from xgboost import XGBRegressor  # 使用XGBoost
-import joblib  # 用于保存模型
-import os  # 用于处理文件和目录
-import re
-import shap  # 导入SHAP库
-import matplotlib.pyplot as plt  # 导入matplotlib用于绘图
+from xgboost import XGBRegressor
+import joblib
+import os
+import shap
+import matplotlib.pyplot as plt
 
 # 1. 读取Excel文件
-file_path = 'data/output_data.xlsx'  # 替换为你的文件路径
+file_path = 'data/output_data.xlsx'
 data = pd.read_excel(file_path)
 
-# 2. 筛选特征列：以 '_resampled' 结尾，'wc' 开头（不区分大小写），以及 'LON' 和 'lat' 列
+# 2. 筛选特征列
 feature_columns = [col for col in data.columns if col.endswith('_resampled') or col.lower().startswith('wc') or col in ['LON', 'LAT']]
+print(feature_columns)
 
 # 3. 分离特征变量和目标变量
 X = data[feature_columns]
@@ -43,48 +43,14 @@ os.makedirs('data/model', exist_ok=True)
 # 9. 保存模型
 joblib.dump(xgb_model, 'data/model/xgboost_model.pkl')
 
-# 10. 保存变量重要性
-feature_importances = xgb_model.feature_importances_
-data = []
-
-# 遍历特征列和特征重要性
-for feature_name, importance_value in zip(feature_columns, feature_importances):
-    feature_name = re.sub('_resampled', '', feature_name)  # 移除 '_resampled'
-    
-    # 判断 category 的类别
-    if feature_name.lower() in ["lon", "lat"]:
-        category = "geo"
-    elif feature_name.startswith('wc'):
-        category = "clim"
-    else:
-        category = "soil"
-
-    # 将每一行的字典添加到列表中
-    data.append({
-        "Feature": feature_name,
-        "Importance": importance_value,
-        "Category": category
-    })
-
-# 创建 DataFrame
-importance_df = pd.DataFrame(data)
-
-# 按 Importance 降序排列并保存为 CSV 文件
-importance_df.sort_values(by='Importance', ascending=False).to_csv('data/model/feature_importances.csv', index=False)
-
-# 11. 保存预测结果
-predictions_df = pd.DataFrame({
-    'Actual': y_test,
-    'Predicted': y_pred
-})
-predictions_df.to_csv('data/model/predictions.csv', index=False)
-
 # 12. 计算 SHAP 值并绘制 SHAP 图
 explainer = shap.Explainer(xgb_model, X_train)
 shap_values = explainer(X_test)
 
-# 绘制 SHAP 值的 summary plot
-shap.summary_plot(shap_values, X_test)
+shap.summary_plot(shap_values, X_test, max_display=10, show=False, cmap='PiYG')
 
 # 保存 SHAP 图
-plt.savefig('data/model/shap_summary_plot.png')
+plt.savefig('data/model/shap_summary_plot.png', bbox_inches='tight')  # 使用 bbox_inches='tight' 确保内容完整
+
+# 关闭图形
+plt.close()
