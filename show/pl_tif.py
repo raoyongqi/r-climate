@@ -27,7 +27,7 @@ if gdf_geojson.crs != albers_proj:
 gdf_geojson.plot(ax=ax, edgecolor='black', facecolor='white', alpha=0.5, label='GeoJSON Data')
 
 # 读取并绘制 TIFF 数据
-tif_file = 'cropped_data/tiff/cropped_predicted_rf.tif'
+tif_file = 'cropped_data/cropped_predicted_rf.tif'
 
 # 提取文件名作为标题
 file_name = os.path.basename(tif_file)
@@ -52,7 +52,7 @@ with rasterio.open(tif_file) as src:
     print(f"TIFF 文件 {tif_file} 的最大值: {vmax}")
     
     # 设置颜色映射
-    cmap = plt.get_cmap('viridis')
+    cmap = plt.get_cmap('viridis').reversed()
     
     # 绘制栅格数据
     im = ax.imshow(data, cmap=cmap, interpolation='none', extent=extent, transform=ccrs.PlateCarree(), alpha=1)

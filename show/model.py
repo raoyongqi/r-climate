@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import time
+import os  # Import os to handle directory operations
 import xgboost as xgb
 import lightgbm as lgb
 from sklearn.ensemble import RandomForestRegressor
@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import seaborn as sns
 from sklearn.linear_model import LinearRegression
-import os  # Import os to handle directory operations
 
 # Set font for displaying Chinese characters
 rcParams['font.sans-serif'] = ['/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc']
@@ -73,45 +72,43 @@ predictions = [y_pred_nn, y_pred_xgb, y_pred_rf, y_pred_lgb]
 # Create the directory if it doesn't exist
 output_dir = 'data'
 os.makedirs(output_dir, exist_ok=True)
-# Create the plots
-plt.figure(figsize=(20, 20))  # Adjust the figure size as needed
 
-for i, (model_name, pred_k) in enumerate(zip(models, predictions), start=1):
-    plt.subplot(2, 2, i)  # Create a 2x2 grid of subplots
+# Create the plots
+for model_name, pred_k in zip(models, predictions):
+    plt.figure(figsize=(10, 10))  # Adjust the figure size as needed
     
     # Ensure y_test and pred_k are 1-dimensional arrays
     y_test_flat = y_test.values.flatten()  # Convert y_test to 1D array
     pred_k_flat = pred_k.flatten()  # Convert predictions to 1D array
-    
+
     # 绘制散点图和密度图
-    sns.kdeplot(x=y_test_flat, y=pred_k_flat, fill=True, cmap="coolwarm", thresh=0.05)
+    sns.kdeplot(x=y_test_flat, y=pred_k_flat, fill=True, cmap="Blues", thresh=0.05)  # Use soft blue color
     plt.scatter(y_test_flat, pred_k_flat, alpha=0.5, color="purple")
 
     # 拟合曲线
     linear_model = LinearRegression()
     linear_model.fit(y_test_flat.reshape(-1, 1), pred_k_flat)
     pred_line = linear_model.predict(y_test_flat.reshape(-1, 1))
-    plt.plot(y_test_flat, pred_line, color='red', label="Fitted Line")
+    plt.plot(y_test_flat, pred_line, color='orange', label="Fitted Line")  # Use soft orange color
 
     # 理想的 y=x 参考线
     plt.plot([min(y_test_flat), max(y_test_flat)], [min(y_test_flat), max(y_test_flat)], 'k--', label="Ideal Line")
 
     # 设置标签和标题
-    plt.xlabel('True Values')
-    plt.ylabel('Predicted Values')
-    plt.title(model_name)
+    plt.xlabel('True Values', fontsize=14, fontweight='bold')  # 横轴标题加粗
+    plt.ylabel('Predicted Values', fontsize=14, fontweight='bold')  # 纵轴标题加粗
+    plt.title(model_name, fontsize=16, fontweight='bold')  # 标题加粗
 
     plt.xlim(min(y_test_flat), max(y_test_flat))
     plt.ylim(min(y_test_flat), max(y_test_flat))
 
     # 显示图例
-    plt.legend()
+    plt.legend(fontsize=16, loc='best', title_fontsize='16', frameon=True)
 
     # 保存每个图像
-    plt.savefig(f'data/{model_name.replace(" ", "_")}_plot.png')
+    plt.savefig(f'data/{model_name.replace(" ", "_")}_plot.png', dpi=300)
 
-# 调整布局以避免重叠
-plt.tight_layout()
+    # 调整布局以避免重叠
+    plt.tight_layout()
+    plt.show()  # Optional: Show each plot
 
-# 显示图像
-plt.show()

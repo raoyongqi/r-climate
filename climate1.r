@@ -15,7 +15,12 @@ sys_info <- Sys.info()
 if (!is.null(sys_info)) {
   if (sys_info['sysname'] == 'Windows') {
     print("系统是Windows")
-    setwd("C:/Users/r/Desktop/r_climate/data")
+    list.files("C:/Users/r/Desktop/r-climate/data")
+    
+    if (!dir.exists(normalizePath("C:/Users/r/Desktop/r-climate/data"))) {
+      stop("目录不存在")
+    }
+    setwd(normalizePath("C:/Users/r/Desktop/r-climate/data"))
     
   } else if (sys_info['sysname'] == 'Linux') {
     os_release <- readLines('/etc/os-release')
@@ -34,6 +39,7 @@ if (!is.null(sys_info)) {
   print("无法获取系统信息")
 }
 
+library(readxl)
 
 # 设置工作目录
 
@@ -93,6 +99,9 @@ for (var in variables) {
 # 保存结果到新的 Excel 文件
 output_file_path <- "climate_data.xlsx"
 write.xlsx(result, output_file_path, rowNames = FALSE)
+# 保存为 CSV 文件，使用 UTF-8 编码
+csv_output_file_path <- "climate_data.csv"
+write.csv(result, file = csv_output_file_path, row.names = FALSE, fileEncoding = "UTF-8")
 
 # 完成
-cat("气候数据已成功保存到", output_file_path, "\n")
+cat("气候数据已成功保存到", output_file_path, "和", csv_output_file_path, "\n")

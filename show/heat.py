@@ -29,21 +29,20 @@ heatmap_data = lower_triangle_corr.dropna(how='all', axis=0).dropna(how='all', a
 plt.figure(figsize=(8, 6))
 plt.imshow(heatmap_data, cmap='coolwarm', aspect='auto', vmin=-1, vmax=1)
 
-# 添加颜色条
-plt.colorbar(label='Correlation Coefficient')
 
 # 显示数值
 for (i, j), val in np.ndenumerate(heatmap_data):
     if not np.isnan(val):  # 只在有值的地方显示
-        plt.text(j, i, f'{val:.2f}', ha='center', va='center', color='black')
+        plt.text(j, i, f'{val:.2f}', ha='center', va='center', color='black',fontsize=14)
 
 # 设置刻度
-plt.xticks(ticks=np.arange(len(heatmap_data.columns)), labels=heatmap_data.columns, rotation=45)
-plt.yticks(ticks=np.arange(len(heatmap_data.index)), labels=heatmap_data.index)
+# 设置刻度
+plt.xticks(ticks=np.arange(len(heatmap_data.columns)), labels=heatmap_data.columns, rotation=45, fontsize=14)  # 设置 x 轴刻度字体大小
+plt.yticks(ticks=np.arange(len(heatmap_data.index)), labels=heatmap_data.index, fontsize=14)  # 设置 y 轴刻度字体大小
 
-# 设置标题
-plt.title('Correlation Matrix of Selected Variables (Lower Triangle Only)')
 
+title = 'Correlation Matrix of Selected Variables (Including Diagonal)'
+plt.title(title, fontsize=16)  # 设置标题字体大小
 
 title ='Correlation Matrix of Selected Variables (Including Diagonal)'
 # 设置标题
