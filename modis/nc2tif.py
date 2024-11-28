@@ -4,11 +4,15 @@ from rasterio.transform import from_origin
 from rasterio.enums import Resampling
 from rasterio.warp import calculate_default_transform, reproject
 import os
+import platform
 
-# 输入和输出文件夹路径
-# 输入和输出文件夹路径
-input_folder = '/home/r/Desktop/r-climate/data/HWSD_1247/data'
-output_folder = '/home/r/Desktop/r-climate/data/HWSD_1247/tif'
+# 判断操作系统并设置文件夹路径
+if platform.system() == "Windows":
+    input_folder = r'C:\Users\r\Desktop\rclimate\data\HWSD_1247\data'
+    output_folder = r'C:\Users\r\Desktop\rclimate\data\HWSD_1247\tif'
+else:  # 默认为 Linux/Unix
+    input_folder = '/home/r/Desktop/rclimate/data/HWSD_1247/data'
+    output_folder = '/home/r/Desktop/rclimate/data/HWSD_1247/tif'
 
 # 目标分辨率（5 分钟）
 target_resolution = 0.083333  # 5 minutes

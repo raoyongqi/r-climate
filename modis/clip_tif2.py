@@ -5,21 +5,41 @@ import numpy as np
 import geopandas as gpd
 
 # 1. 加载 GeoJSON 文件
-grasslands_geojson_file = '/home/r/Desktop/r-climate/data/clipped_data.geojson'
+import platform
+
+if platform.system() == "Windows":
+    grasslands_geojson_file = r'C:\Users\r\Desktop\rclimate\geojson\clipped_data.geojson'
+else:  # Linux 或其他
+    grasslands_geojson_file = '/home/r/Desktop/r-climate/geojson/clipped_data.geojson'
+
 grasslands_gdf = gpd.read_file(grasslands_geojson_file)
 
 # 2. 筛选出值等于 10 的 Grasslands (草地)
 grasslands_gdf_filtered = grasslands_gdf[grasslands_gdf['value'] == 10]
 
-# 输入文件夹列表
+base_dir = (
+    r'C:\Users\r\Desktop\rclimate\geojson'
+    if platform.system() == "Windows"
+    else '/home/r/Desktop/r-climate/data'
+)
+
 tiff_folders = [
-    '/home/r/Desktop/r-climate/data/climate/wc2.1_5m/',
-    '/home/r/Desktop/r-climate/data/HWSD_1247/tif/'
+    os.path.join(base_dir, 'climate', 'wc2.1_5m'),
+    os.path.join(base_dir, 'HWSD_1247', 'tif')
 ]
 
-# 指定输出文件夹路径
-geojson_output_folder = '/home/r/Desktop/r-climate/cropped_data/geojson/'
-tiff_output_folder = '/home/r/Desktop/r-climate/cropped_data/tiff/'
+print("TIFF folders:")
+for folder in tiff_folders:
+    print(folder)
+
+
+if platform.system() == "Windows":
+    base_output_folder = r'C:\Users\r\rclimate\cropped_data'
+else:  # Linux 或其他
+    base_output_folder = '/home/r/Desktop/r-climate/cropped_data'
+
+geojson_output_folder = os.path.join(base_output_folder, 'geojson')
+tiff_output_folder = os.path.join(base_output_folder, 'tiff')
 
 # 创建输出文件夹（如果不存在）
 os.makedirs(geojson_output_folder, exist_ok=True)

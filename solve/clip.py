@@ -3,23 +3,33 @@ import rasterio
 from rasterio.mask import mask
 import numpy as np
 import geopandas as gpd
+import platform
+if platform.system() == "Windows":
+    # Windows 环境的文件路径
+    base_path = r'C:\Users\r\Desktop\rclimate'
+else:
+    # Linux 环境的文件路径
+    base_path = '/home/r/Desktop/r-climate'
 
 # 1. 加载 GeoJSON 文件
-grasslands_geojson_file = '/home/r/Desktop/r-climate/data/clipped_data.geojson'
+grasslands_geojson_file = os.path.join(base_path, 'geojson', 'clipped_data.geojson')
 grasslands_gdf = gpd.read_file(grasslands_geojson_file)
 
 # 2. 筛选出值等于 10 的 Grasslands (草地)
 grasslands_gdf_filtered = grasslands_gdf[grasslands_gdf['value'] == 10]
 
 # 输入文件夹列表
-tiff_folders = [
-    '/home/r/Desktop/r-climate/data/result/',
-]
-
+if platform.system() == "Windows":
+    tiff_folders = [
+        r'C:\Users\r\Desktop\rclimate\data\result',
+    ]
+else:
+    tiff_folders = [
+        '/home/r/Desktop/r-climate/data/result/',
+    ]
 # 指定输出文件夹路径
-geojson_output_folder = '/home/r/Desktop/r-climate/cropped_data/geojson/'
-tiff_output_folder = '/home/r/Desktop/r-climate/cropped_data/tiff/'
-
+geojson_output_folder = os.path.join(base_path, 'cropped_data', 'geojson')
+tiff_output_folder = os.path.join(base_path, 'cropped_data', 'tiff')
 # 创建输出文件夹（如果不存在）
 os.makedirs(geojson_output_folder, exist_ok=True)
 os.makedirs(tiff_output_folder, exist_ok=True)

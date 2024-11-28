@@ -6,13 +6,13 @@ sys_info <- Sys.info()
 if (!is.null(sys_info)) {
   if (sys_info['sysname'] == 'Windows') {
     print("系统是Windows")
-    setwd("C:/Users/r/Desktop/r_climate/data")
+    setwd("C:/Users/r/Desktop/rclimate/data")
     
   } else if (sys_info['sysname'] == 'Linux') {
     os_release <- readLines('/etc/os-release')
     if (any(grepl("Ubuntu", os_release))) {
       print("系统是Ubuntu")
-      setwd("~/Desktop/getData/r-climate/data")
+      setwd("~/Desktop/getData/rclimate/data")
       
       
     } else {

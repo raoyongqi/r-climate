@@ -7,7 +7,7 @@ from rasterio.features import shapes
 import json
 
 # 打开 HDF 文件
-hdf_file = 'MCD12C1.A2020001.061.2022172062638.hdf'
+hdf_file = 'data/MCD12C1.A2020001.061.2022172062638.hdf'
 dataset = gdal.Open(f'HDF4_EOS:EOS_GRID:{hdf_file}:"GridName"')
 
 # 读取 GeoJSON 文件
@@ -55,5 +55,5 @@ with rasterio.open('clipped_data.tif') as src:
     }
 
 # 保存为 GeoJSON 文件
-with open('clipped_data.geojson', 'w') as f:
+with open('geojson/clipped_data.geojson', 'w') as f:
     json.dump(geojson, f)

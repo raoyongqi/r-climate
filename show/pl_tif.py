@@ -16,7 +16,7 @@ albers_proj = ccrs.AlbersEqualArea(
 fig, ax = plt.subplots(figsize=(12, 12), subplot_kw={'projection': albers_proj})
 
 # 读取 GeoJSON 数据
-geojson_file_path = 'data/中华人民共和国.json'
+geojson_file_path = 'geojson/中华人民共和国.json'
 gdf_geojson = gpd.read_file(geojson_file_path)
 
 # 转换 GeoJSON 数据的坐标系到自定义投影坐标系
@@ -27,7 +27,7 @@ if gdf_geojson.crs != albers_proj:
 gdf_geojson.plot(ax=ax, edgecolor='black', facecolor='white', alpha=0.5, label='GeoJSON Data')
 
 # 读取并绘制 TIFF 数据
-tif_file = 'cropped_data/cropped_predicted_rf.tif'
+tif_file = 'cropped_data/tiff/cropped_predicted_rf.tif'
 
 # 提取文件名作为标题
 file_name = os.path.basename(tif_file)

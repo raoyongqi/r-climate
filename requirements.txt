@@ -1,9 +1,12 @@
 ﻿absl-py
+pandas
 affine
 astunparse
 attrs
 Cartopy
 certifi
+netCDF4 
+h5netcdf
 charset-normalizer
 click
 click-plugins
@@ -71,3 +74,6 @@ Werkzeug
 wheel
 wrapt
 xgboost
+xarray
+rasterio
+shap

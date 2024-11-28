@@ -1,5 +1,6 @@
 /data
-/HWSD-master/venv/HWSD-master/venv
+/HWSD-master/venv/
+HWSD-master/venv
 RF/venv
 /cropped_data
 load-more-demo/node_modules

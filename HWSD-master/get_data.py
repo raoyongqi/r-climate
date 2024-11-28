@@ -3,11 +3,22 @@ import numpy as np
 import os
 import rasterio
 from rasterio.transform import rowcol
+import platform
+import os
 
-# 输入文件路径和文件夹路径
-excel_file = '/home/r/Desktop/getData/r-climate/data/final_data.xlsx'
-tif_folder = '/home/r/Desktop/getData/r-climate/data/HWSD_1247/tif'
-output_excel = '/home/r/Desktop/getData/r-climate/data/output_data.xlsx'
+# 判断操作系统并设置路径
+if platform.system() == "Windows":
+    
+    base_path = r'C:\Users\r\Desktop\rclimate\data'
+else:  # Linux 或其他 Unix 系统
+    base_path = '/home/r/Desktop/rclimate/data'
+
+# 动态设置文件路径
+excel_file = os.path.join(base_path, 'final_data.xlsx')
+tif_folder = os.path.join(base_path, 'HWSD_1247', 'tif')
+output_excel = os.path.join(base_path, 'output_data.xlsx')
+
+
 
 # 读取 Excel 文件中的经纬度数据
 df = pd.read_excel(excel_file)
